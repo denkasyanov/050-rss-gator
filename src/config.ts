@@ -8,25 +8,31 @@ type Config = {
 };
 
 function getConfigFilePath(): string {
-  const configName = ".gatorconfig.json";
   const homeDir = os.homedir();
+  const configName = ".gatorconfig.json";
   return path.join(homeDir, configName);
 }
 
-function validateConfig(rawConfig: any): Config {
-  if (!rawConfig.db_url || typeof rawConfig.db_url !== "string") {
+function validateConfig(rawConfig: unknown): Config {
+  if (!rawConfig || typeof rawConfig !== "object") {
+    throw new Error("Config must be an object");
+  }
+
+  const config = rawConfig as Record<string, unknown>;
+
+  if (!config.db_url || typeof config.db_url !== "string") {
     throw new Error("dbUrl must be a string");
   }
   if (
-    !rawConfig.current_user_name ||
-    typeof rawConfig.current_user_name !== "string"
+    !config.current_user_name ||
+    typeof config.current_user_name !== "string"
   ) {
     throw new Error("current_user_name must be a string");
   }
 
   return {
-    dbUrl: rawConfig.db_url,
-    currentUserName: rawConfig.current_user_name || "",
+    dbUrl: config.db_url,
+    currentUserName: config.current_user_name || "",
   };
 }
 
