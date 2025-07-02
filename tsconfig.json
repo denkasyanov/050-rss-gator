@@ -2,7 +2,9 @@
   "compilerOptions": {
     "target": "ES2022",
     "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "lib": ["ES2022"],
+    "types": ["node"],
     "rootDir": "./src",
     "outDir": "./dist",
     "strict": true,
@@ -16,7 +18,8 @@
     "sourceMap": true,
     "noEmit": false,
     "noUncheckedIndexedAccess": true,
-    "allowUnreachableCode": false
+    "allowUnreachableCode": false,
+    "resolveJsonModule": true
   },
 
   "ts-node": {
