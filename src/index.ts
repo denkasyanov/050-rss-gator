@@ -4,12 +4,17 @@ import {
   runCommand,
 } from "./commands/index.js";
 import { handlerReset } from "./commands/reset.js";
-import { handlerLogin, handlerRegister } from "./commands/users.js";
+import {
+  handlerLogin,
+  handlerRegister,
+  handlerUsers,
+} from "./commands/users.js";
 
 async function main() {
   const registry: CommandRegistry = {};
   registerCommand(registry, "login", handlerLogin);
   registerCommand(registry, "register", handlerRegister);
+  registerCommand(registry, "users", handlerUsers);
 
   registerCommand(registry, "reset", handlerReset);
 

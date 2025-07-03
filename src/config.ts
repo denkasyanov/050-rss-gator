@@ -60,3 +60,8 @@ export function setUser(name: string) {
   config.currentUserName = name;
   writeConfig(config);
 }
+
+export function getCurrentUsername() {
+  const config = readConfig();
+  return config.currentUserName;
+}
