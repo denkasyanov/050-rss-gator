@@ -11,7 +11,7 @@ export async function requireUser() {
   if (!username) {
     throw new Error("You must be logged in to get the current user");
   }
-  const user = await getUser(username);
+  const user = await getUser({ name: username });
   if (!user) {
     throw new Error("User not found");
   }

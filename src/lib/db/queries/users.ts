@@ -7,9 +7,15 @@ export async function createUser(name: string) {
   return result;
 }
 
-export async function getUser(name: string) {
-  const [result] = await db.select().from(users).where(eq(users.name, name));
-  return result;
+export async function getUser({ id, name }: { id?: string; name?: string }) {
+  if (!id && !name) {
+    throw new Error("Either id or name must be provided");
+  }
+  const results = await db
+    .select()
+    .from(users)
+    .where(id ? eq(users.id, id) : name ? eq(users.name, name) : undefined);
+  return results[0];
 }
 
 export async function listUsers() {

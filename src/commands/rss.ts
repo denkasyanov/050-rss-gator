@@ -1,4 +1,5 @@
-import { createFeed, getFeed } from "../lib/db/queries/rss.js";
+import { createFeed, getFeed, listFeeds } from "../lib/db/queries/rss.js";
+import { getUser } from "../lib/db/queries/users.js";
 import { fetchFeed, printFeed } from "../lib/rss.js";
 import { requireUser } from "../lib/users.js";
 
@@ -28,5 +29,18 @@ export async function handlerAddFeed(cmdName: string, ...args: string[]) {
   if (!feed) {
     throw new Error("Failed to add feed");
   }
-  console.log(`Feed ${feed.name} added`);
+  printFeed(feed, user);
+}
+
+export async function handlerListFeeds() {
+  // const user = await requireUser();
+  const feeds = await listFeeds(undefined);
+  for (const feed of feeds) {
+    console.log(feed.name);
+    console.log(feed.url);
+
+    const user = await getUser({ id: feed.user_id });
+    console.log(user!.name);
+    console.log("--------------------------------");
+  }
 }

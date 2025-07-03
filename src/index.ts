@@ -4,7 +4,11 @@ import {
   runCommand,
 } from "./commands/index.js";
 import { handlerReset } from "./commands/reset.js";
-import { handlerAddFeed, handlerAgg } from "./commands/rss.js";
+import {
+  handlerAddFeed,
+  handlerAgg,
+  handlerListFeeds,
+} from "./commands/rss.js";
 import {
   handlerLogin,
   handlerRegister,
@@ -16,8 +20,10 @@ async function main() {
   registerCommand(registry, "login", handlerLogin);
   registerCommand(registry, "register", handlerRegister);
   registerCommand(registry, "users", handlerUsers);
+
   registerCommand(registry, "agg", handlerAgg);
   registerCommand(registry, "addfeed", handlerAddFeed);
+  registerCommand(registry, "feeds", handlerListFeeds);
 
   registerCommand(registry, "reset", handlerReset);
 

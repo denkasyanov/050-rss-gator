@@ -43,7 +43,6 @@ export async function fetchFeed(feedUrl: string): Promise<ParsedRSSFeed> {
   const text = await res.text();
   const parser = new XMLParser();
   const feed = parser.parse(text);
-  console.log({ feed });
   if (!feed.rss.channel) {
     throw new Error("Invalid RSS feed");
   }

@@ -12,7 +12,7 @@ export async function handlerLogin(cmdName: string, ...args: string[]) {
     throw new Error(`Usage: gator ${cmdName} <username>`);
   }
 
-  const user = await getUser(username);
+  const user = await getUser({ name: username });
   if (!user) {
     throw new Error(`User ${username} not found`);
   }
@@ -31,7 +31,7 @@ export async function handlerRegister(cmdName: string, ...args: string[]) {
     throw new Error(`Usage: gator ${cmdName} <username>`);
   }
 
-  const existingUser = await getUser(username);
+  const existingUser = await getUser({ name: username });
   if (existingUser) {
     throw new Error(`User ${username} already exists`);
   }

@@ -18,3 +18,11 @@ export async function createFeed(name: string, url: string, userId: string) {
     .returning();
   return newFeeds[0];
 }
+
+export async function listFeeds(userId: string | undefined) {
+  const results = await db
+    .select()
+    .from(feeds)
+    .where(userId ? eq(feeds.user_id, userId) : undefined);
+  return results;
+}
