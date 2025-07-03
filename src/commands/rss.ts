@@ -39,7 +39,7 @@ export async function handlerListFeeds() {
     console.log(feed.name);
     console.log(feed.url);
 
-    const user = await getUser({ id: feed.user_id });
+    const user = await getUser({ id: feed.userId });
     console.log(user!.name);
     console.log("--------------------------------");
   }

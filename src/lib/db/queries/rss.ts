@@ -10,11 +10,7 @@ export async function getFeed(feedUrl: string) {
 export async function createFeed(name: string, url: string, userId: string) {
   const newFeeds = await db
     .insert(feeds)
-    .values({
-      name,
-      url,
-      user_id: userId,
-    })
+    .values({ name, url, userId })
     .returning();
   return newFeeds[0];
 }
@@ -23,6 +19,6 @@ export async function listFeeds(userId: string | undefined) {
   const results = await db
     .select()
     .from(feeds)
-    .where(userId ? eq(feeds.user_id, userId) : undefined);
+    .where(userId ? eq(feeds.userId, userId) : undefined);
   return results;
 }
