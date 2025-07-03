@@ -7,6 +7,8 @@ import { handlerReset } from "./commands/reset.js";
 import {
   handlerAddFeed,
   handlerAgg,
+  handlerFollowFeed,
+  handlerFollowing,
   handlerListFeeds,
 } from "./commands/rss.js";
 import {
@@ -24,6 +26,8 @@ async function main() {
   registerCommand(registry, "agg", handlerAgg);
   registerCommand(registry, "addfeed", handlerAddFeed);
   registerCommand(registry, "feeds", handlerListFeeds);
+  registerCommand(registry, "follow", handlerFollowFeed);
+  registerCommand(registry, "following", handlerFollowing);
 
   registerCommand(registry, "reset", handlerReset);
 

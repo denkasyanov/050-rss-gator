@@ -1,4 +1,10 @@
-import { createFeed, getFeed, listFeeds } from "../lib/db/queries/rss.js";
+import {
+  createFeed,
+  createFeedFollow,
+  getFeed,
+  listFeedFollows,
+  listFeeds,
+} from "../lib/db/queries/rss.js";
 import { getUser } from "../lib/db/queries/users.js";
 import { fetchFeed, printFeed } from "../lib/rss.js";
 import { requireUser } from "../lib/users.js";
@@ -29,18 +35,55 @@ export async function handlerAddFeed(cmdName: string, ...args: string[]) {
   if (!feed) {
     throw new Error("Failed to add feed");
   }
-  printFeed(feed, user);
+
+  const feedFollow = await createFeedFollow(feed.id, user.id);
+  if (!feedFollow) {
+    throw new Error("Failed to follow feed");
+  }
+
+  printFeed(feedFollow.feed, user);
 }
 
 export async function handlerListFeeds() {
   // const user = await requireUser();
   const feeds = await listFeeds(undefined);
   for (const feed of feeds) {
-    console.log(feed.name);
-    console.log(feed.url);
-
     const user = await getUser({ id: feed.userId });
-    console.log(user!.name);
-    console.log("--------------------------------");
+    printFeed(feed, user!);
+  }
+}
+
+export async function handlerFollowFeed(cmdName: string, ...args: string[]) {
+  const user = await requireUser();
+
+  const feedUrl = args[0];
+
+  if (!feedUrl) {
+    throw new Error(`Usage: gator ${cmdName} <feed-url>`);
+  }
+
+  const feed = await getFeed(feedUrl);
+  if (feed.length === 0 || !feed[0]) {
+    throw new Error("Feed not found");
+  }
+
+  const feedFollow = await createFeedFollow(feed[0].id, user.id);
+  if (!feedFollow) {
+    throw new Error("Failed to follow feed");
+  }
+
+  printFeed(feedFollow.feed, user);
+}
+
+export async function handlerFollowing() {
+  const user = await requireUser();
+  const feedFollows = await listFeedFollows(user.id);
+  if (feedFollows.length === 0) {
+    console.log(`No feed follows for ${user.name}`);
+    return;
+  }
+
+  for (const feedFollow of feedFollows) {
+    printFeed(feedFollow.feed, user);
   }
 }
