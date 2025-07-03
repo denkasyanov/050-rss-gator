@@ -3,11 +3,15 @@ import {
   registerCommand,
   runCommand,
 } from "./commands/index.js";
-import { handlerLogin } from "./commands/users.js";
+import { handlerReset } from "./commands/reset.js";
+import { handlerLogin, handlerRegister } from "./commands/users.js";
 
-function main() {
+async function main() {
   const registry: CommandRegistry = {};
   registerCommand(registry, "login", handlerLogin);
+  registerCommand(registry, "register", handlerRegister);
+
+  registerCommand(registry, "reset", handlerReset);
 
   const args = process.argv.slice(2);
   if (args.length === 0) {
@@ -17,11 +21,12 @@ function main() {
   const cmdName = args[0];
   const cmdArgs = args.slice(1);
   try {
-    runCommand(registry, cmdName!, ...cmdArgs);
+    await runCommand(registry, cmdName!, ...cmdArgs);
   } catch (error) {
     console.log((error as Error).message);
     process.exit(1);
   }
+  process.exit(0);
 }
 
 main();
