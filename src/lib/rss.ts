@@ -1,15 +1,16 @@
 import { XMLParser } from "fast-xml-parser";
+import { Feed, User } from "./db/schema.js";
 
-type RSSFeed = {
+type ParsedRSSFeed = {
   channel: {
     title: string;
     link: string;
     description: string;
-    item: RSSItem[];
+    item: ParsedRSSItem[];
   };
 };
 
-type RSSItem = {
+type ParsedRSSItem = {
   title: string;
   link: string;
   description: string;
@@ -37,7 +38,7 @@ type RSSItem = {
 // </channel>
 // </rss>
 
-export async function fetchFeed(feedUrl: string): Promise<RSSFeed> {
+export async function fetchFeed(feedUrl: string): Promise<ParsedRSSFeed> {
   const res = await fetch(feedUrl, { headers: { "User-Agent": "gator" } });
   const text = await res.text();
   const parser = new XMLParser();
