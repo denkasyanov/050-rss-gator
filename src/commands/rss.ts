@@ -6,8 +6,8 @@ import {
   listFeeds,
 } from "../lib/db/queries/rss.js";
 import { getUser } from "../lib/db/queries/users.js";
+import { User } from "../lib/db/schema.js";
 import { fetchFeed, printFeed } from "../lib/rss.js";
-import { requireUser } from "../lib/users.js";
 
 export async function handlerAgg() {
   const feedUrl = "https://www.wagslane.dev/index.xml";
@@ -16,9 +16,7 @@ export async function handlerAgg() {
   console.log(feed);
 }
 
-export async function handlerAddFeed(cmdName: string, ...args: string[]) {
-  const user = await requireUser();
-
+export async function handlerAddFeed(cmdName: string, user: User, ...args: string[]) {
   const feedName = args[0];
   const feedUrl = args[1];
 
@@ -53,9 +51,7 @@ export async function handlerListFeeds() {
   }
 }
 
-export async function handlerFollowFeed(cmdName: string, ...args: string[]) {
-  const user = await requireUser();
-
+export async function handlerFollowFeed(cmdName: string, user: User, ...args: string[]) {
   const feedUrl = args[0];
 
   if (!feedUrl) {
@@ -75,8 +71,7 @@ export async function handlerFollowFeed(cmdName: string, ...args: string[]) {
   printFeed(feedFollow.feed, user);
 }
 
-export async function handlerFollowing() {
-  const user = await requireUser();
+export async function handlerFollowing(_cmdName: string, user: User) {
   const feedFollows = await listFeedFollows(user.id);
   if (feedFollows.length === 0) {
     console.log(`No feed follows for ${user.name}`);

@@ -1,4 +1,22 @@
+import { User } from "../lib/db/schema.js";
+import { requireUser } from "../lib/users.js";
+
 type CommandHandler = (cmdName: string, ...args: string[]) => Promise<void>;
+
+type UserCommandHandler = (
+  cmdName: string,
+  user: User,
+  ...args: string[]
+) => Promise<void>;
+
+export function middlewareLoggedIn(
+  handler: UserCommandHandler
+): CommandHandler {
+  return async (cmdName, ...args) => {
+    const user = await requireUser();
+    await handler(cmdName, user, ...args);
+  };
+}
 
 export type CommandRegistry = Record<string, CommandHandler>;
 

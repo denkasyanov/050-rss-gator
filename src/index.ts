@@ -1,5 +1,6 @@
 import {
   CommandRegistry,
+  middlewareLoggedIn,
   registerCommand,
   runCommand,
 } from "./commands/index.js";
@@ -24,10 +25,10 @@ async function main() {
   registerCommand(registry, "users", handlerUsers);
 
   registerCommand(registry, "agg", handlerAgg);
-  registerCommand(registry, "addfeed", handlerAddFeed);
+  registerCommand(registry, "addfeed", middlewareLoggedIn(handlerAddFeed));
   registerCommand(registry, "feeds", handlerListFeeds);
-  registerCommand(registry, "follow", handlerFollowFeed);
-  registerCommand(registry, "following", handlerFollowing);
+  registerCommand(registry, "follow", middlewareLoggedIn(handlerFollowFeed));
+  registerCommand(registry, "following", middlewareLoggedIn(handlerFollowing));
 
   registerCommand(registry, "reset", handlerReset);
 
