@@ -1,3 +1,4 @@
+// Duration utilities
 export function parseDuration(durationStr: string): number | undefined {
   const regex = /^(\d+)(ms|s|m|h)$/;
   const match = durationStr.match(regex);
@@ -33,4 +34,23 @@ export function formatDuration(milliseconds: number): string {
   if (seconds > 0 || timeString === "") timeString += `${seconds}s`;
 
   return timeString;
+}
+
+// Date utilities
+export function parseRSSDate(dateString: string | undefined | null): Date | null {
+  if (!dateString) return null;
+  
+  try {
+    const date = new Date(dateString);
+    
+    if (isNaN(date.getTime())) {
+      console.error(`Invalid date string: ${dateString}`);
+      return null;
+    }
+    
+    return date;
+  } catch (error) {
+    console.error(`Error parsing date string "${dateString}":`, error);
+    return null;
+  }
 }
