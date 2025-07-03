@@ -1,6 +1,7 @@
 import {
   createFeed,
   createFeedFollow,
+  deleteFeedFollow,
   getFeed,
   listFeedFollows,
   listFeeds,
@@ -16,7 +17,11 @@ export async function handlerAgg() {
   console.log(feed);
 }
 
-export async function handlerAddFeed(cmdName: string, user: User, ...args: string[]) {
+export async function handlerAddFeed(
+  cmdName: string,
+  user: User,
+  ...args: string[]
+) {
   const feedName = args[0];
   const feedUrl = args[1];
 
@@ -51,7 +56,23 @@ export async function handlerListFeeds() {
   }
 }
 
-export async function handlerFollowFeed(cmdName: string, user: User, ...args: string[]) {
+export async function handlerFollowing(_cmdName: string, user: User) {
+  const feedFollows = await listFeedFollows(user.id);
+  if (feedFollows.length === 0) {
+    console.log(`No feed follows for ${user.name}`);
+    return;
+  }
+
+  for (const feedFollow of feedFollows) {
+    printFeed(feedFollow.feed, user);
+  }
+}
+
+export async function handlerFollowFeed(
+  cmdName: string,
+  user: User,
+  ...args: string[]
+) {
   const feedUrl = args[0];
 
   if (!feedUrl) {
@@ -71,14 +92,26 @@ export async function handlerFollowFeed(cmdName: string, user: User, ...args: st
   printFeed(feedFollow.feed, user);
 }
 
-export async function handlerFollowing(_cmdName: string, user: User) {
-  const feedFollows = await listFeedFollows(user.id);
-  if (feedFollows.length === 0) {
-    console.log(`No feed follows for ${user.name}`);
-    return;
+export async function handlerUnfollowFeed(
+  cmdName: string,
+  user: User,
+  ...args: string[]
+) {
+  const feedUrl = args[0];
+
+  if (!feedUrl) {
+    throw new Error(`Usage: gator ${cmdName} <feed-url>`);
   }
 
-  for (const feedFollow of feedFollows) {
-    printFeed(feedFollow.feed, user);
+  const feed = await getFeed(feedUrl);
+  if (feed.length === 0 || !feed[0]) {
+    throw new Error("Feed not found");
   }
+
+  const feedFollow = await deleteFeedFollow(feed[0].id, user.id);
+  if (!feedFollow) {
+    throw new Error("Failed to unfollow feed");
+  }
+
+  printFeed(feedFollow.feed, feedFollow.user);
 }

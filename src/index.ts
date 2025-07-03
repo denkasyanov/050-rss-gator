@@ -11,6 +11,7 @@ import {
   handlerFollowFeed,
   handlerFollowing,
   handlerListFeeds,
+  handlerUnfollowFeed,
 } from "./commands/rss.js";
 import {
   handlerLogin,
@@ -27,8 +28,13 @@ async function main() {
   registerCommand(registry, "agg", handlerAgg);
   registerCommand(registry, "addfeed", middlewareLoggedIn(handlerAddFeed));
   registerCommand(registry, "feeds", handlerListFeeds);
-  registerCommand(registry, "follow", middlewareLoggedIn(handlerFollowFeed));
   registerCommand(registry, "following", middlewareLoggedIn(handlerFollowing));
+  registerCommand(registry, "follow", middlewareLoggedIn(handlerFollowFeed));
+  registerCommand(
+    registry,
+    "unfollow",
+    middlewareLoggedIn(handlerUnfollowFeed)
+  );
 
   registerCommand(registry, "reset", handlerReset);
 
