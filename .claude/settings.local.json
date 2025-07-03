@@ -12,7 +12,8 @@
       "Bash(npm run start:*)",
       "Bash(npm run typecheck:*)",
       "Bash(npm run:*)",
-      "Bash(npm start:*)"
+      "Bash(npm start:*)",
+      "Bash(pnpm start:*)"
     ],
     "deny": []
   }

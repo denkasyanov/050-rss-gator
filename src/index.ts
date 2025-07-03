@@ -42,7 +42,7 @@ async function main() {
 
   const args = process.argv.slice(2);
   if (args.length === 0) {
-    console.log("Usage: gator <command> [args...]");
+    console.log("Usage: pnpm start <command> [args...]");
     process.exit(1);
   }
   const cmdName = args[0];

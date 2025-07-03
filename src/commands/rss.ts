@@ -17,7 +17,7 @@ export async function handlerAgg(_cmdName: string, ...args: string[]) {
   const timeBetweenReqsStr = args[0];
 
   if (!timeBetweenReqsStr) {
-    throw new Error("Usage: gator agg <time_between_reqs>");
+    throw new Error("Usage: pnpm start agg <time_between_reqs>");
   }
 
   const timeBetweenRequests = parseDuration(timeBetweenReqsStr);
@@ -57,7 +57,7 @@ export async function handlerAddFeed(
   const feedUrl = args[1];
 
   if (!feedName || !feedUrl) {
-    throw new Error(`Usage: gator ${cmdName} <feed-name> <feed-url>`);
+    throw new Error(`Usage: pnpm start ${cmdName} <feed-name> <feed-url>`);
   }
 
   const existingFeed = await getFeed(feedUrl);
@@ -107,7 +107,7 @@ export async function handlerFollowFeed(
   const feedUrl = args[0];
 
   if (!feedUrl) {
-    throw new Error(`Usage: gator ${cmdName} <feed-url>`);
+    throw new Error(`Usage: pnpm start ${cmdName} <feed-url>`);
   }
 
   const feed = await getFeed(feedUrl);
@@ -131,7 +131,7 @@ export async function handlerUnfollowFeed(
   const feedUrl = args[0];
 
   if (!feedUrl) {
-    throw new Error(`Usage: gator ${cmdName} <feed-url>`);
+    throw new Error(`Usage: pnpm start ${cmdName} <feed-url>`);
   }
 
   const feed = await getFeed(feedUrl);

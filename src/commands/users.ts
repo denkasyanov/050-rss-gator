@@ -4,12 +4,12 @@ import { getCurrentUsername } from "../lib/users.js";
 
 export async function handlerLogin(cmdName: string, ...args: string[]) {
   if (args.length !== 1) {
-    throw new Error(`Usage: gator ${cmdName} <username>`);
+    throw new Error(`Usage: pnpm start ${cmdName} <username>`);
   }
 
   const username = args[0];
   if (!username) {
-    throw new Error(`Usage: gator ${cmdName} <username>`);
+    throw new Error(`Usage: pnpm start ${cmdName} <username>`);
   }
 
   const user = await getUser({ name: username });
@@ -23,12 +23,12 @@ export async function handlerLogin(cmdName: string, ...args: string[]) {
 
 export async function handlerRegister(cmdName: string, ...args: string[]) {
   if (args.length !== 1) {
-    throw new Error(`Usage: gator ${cmdName} <username>`);
+    throw new Error(`Usage: pnpm start ${cmdName} <username>`);
   }
 
   const username = args[0];
   if (!username) {
-    throw new Error(`Usage: gator ${cmdName} <username>`);
+    throw new Error(`Usage: pnpm start ${cmdName} <username>`);
   }
 
   const existingUser = await getUser({ name: username });
