@@ -1,7 +1,6 @@
-import { getCurrentUsername } from "../config.js";
 import { createFeed, getFeed } from "../lib/db/queries/rss.js";
-import { getUser } from "../lib/db/queries/users.js";
-import { fetchFeed } from "../lib/rss.js";
+import { fetchFeed, printFeed } from "../lib/rss.js";
+import { requireUser } from "../lib/users.js";
 
 export async function handlerAgg() {
   const feedUrl = "https://www.wagslane.dev/index.xml";
@@ -11,15 +10,7 @@ export async function handlerAgg() {
 }
 
 export async function handlerAddFeed(cmdName: string, ...args: string[]) {
-  const currentUsername = getCurrentUsername();
-  if (!currentUsername) {
-    throw new Error("You must be logged in to add a feed");
-  }
-
-  const user = await getUser(currentUsername);
-  if (!user) {
-    throw new Error("User not found");
-  }
+  const user = await requireUser();
 
   const feedName = args[0];
   const feedUrl = args[1];
