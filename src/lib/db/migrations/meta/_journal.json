@@ -15,6 +15,20 @@
       "when": 1751566673204,
       "tag": "0001_pretty_joseph",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1751571481341,
+      "tag": "0002_tired_ben_parker",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1751571930640,
+      "tag": "0003_bumpy_spyke",
+      "breakpoints": true
     }
   ]
 }

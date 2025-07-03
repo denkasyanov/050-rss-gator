@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX "feed_user_unique" ON "feed_follows" USING btree ("feed_id","user_id");
