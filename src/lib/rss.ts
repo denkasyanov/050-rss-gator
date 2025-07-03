@@ -1,5 +1,6 @@
 import { XMLParser } from "fast-xml-parser";
 import { Feed, User } from "./db/schema.js";
+import { getNextFeedToFetch, markFeedAsFetched } from "./db/queries/rss.js";
 
 type ParsedRSSFeed = {
   channel: {
@@ -38,7 +39,7 @@ type ParsedRSSItem = {
 // </channel>
 // </rss>
 
-export async function fetchFeed(feedUrl: string): Promise<ParsedRSSFeed> {
+export async function fetchFeed(feedUrl: string): Promise<ParsedRSSFeed["channel"]> {
   const res = await fetch(feedUrl, { headers: { "User-Agent": "gator" } });
   const text = await res.text();
   const parser = new XMLParser();
@@ -57,4 +58,36 @@ export function printFeed(feed: Feed, user: User) {
   console.log(`* URL:           ${feed.url}`);
   console.log(`* User:          ${user.name}`);
   console.log("--------------------------------");
+}
+
+
+export async function scrapeFeeds() {
+  const nextFeed = await getNextFeedToFetch();
+  if (!nextFeed) {
+    console.log("No feeds to fetch");
+    return;
+  }
+
+  await markFeedAsFetched(nextFeed.id);
+
+  try {
+    console.log("=====================================");
+    console.log(`Fetching feed: ${nextFeed.name}`);
+    console.log(`URL: ${nextFeed.url}`);
+    console.log("=====================================");
+    
+    const feedData = await fetchFeed(nextFeed.url);
+    
+    if (feedData.item && Array.isArray(feedData.item)) {
+      for (const item of feedData.item) {
+        console.log(`- ${item.title}`);
+      }
+    } else if (feedData.item) {
+      const singleItem = feedData.item as ParsedRSSItem;
+      console.log(`- ${singleItem.title}`);
+    }
+    console.log("=====================================\n");
+  } catch (error) {
+    console.error(`Error fetching feed ${nextFeed.name}: ${(error as Error).message}`);
+  }
 }

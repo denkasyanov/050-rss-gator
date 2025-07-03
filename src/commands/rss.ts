@@ -8,13 +8,42 @@ import {
 } from "../lib/db/queries/rss.js";
 import { getUser } from "../lib/db/queries/users.js";
 import { User } from "../lib/db/schema.js";
-import { fetchFeed, printFeed } from "../lib/rss.js";
+import { printFeed, scrapeFeeds } from "../lib/rss.js";
+import { formatDuration, parseDuration } from "../lib/time.js";
 
-export async function handlerAgg() {
-  const feedUrl = "https://www.wagslane.dev/index.xml";
+export async function handlerAgg(_cmdName: string, ...args: string[]) {
+  const timeBetweenReqsStr = args[0];
 
-  const feed = await fetchFeed(feedUrl);
-  console.log(feed);
+  if (!timeBetweenReqsStr) {
+    throw new Error("Usage: gator agg <time_between_reqs>");
+  }
+
+  const timeBetweenRequests = parseDuration(timeBetweenReqsStr);
+  if (!timeBetweenRequests) {
+    throw new Error("Invalid time between requests");
+  }
+
+  const timeString = formatDuration(timeBetweenRequests);
+
+  console.log(`Collecting feeds every ${timeString}`);
+
+  const handleError = (error: unknown) => {
+    console.error("Error in scrapeFeeds:", error);
+  };
+
+  scrapeFeeds().catch(handleError);
+
+  const interval = setInterval(() => {
+    scrapeFeeds().catch(handleError);
+  }, timeBetweenRequests);
+
+  await new Promise<void>((resolve) => {
+    process.on("SIGINT", () => {
+      console.log("Shutting down feed aggregator...");
+      clearInterval(interval);
+      resolve();
+    });
+  });
 }
 
 export async function handlerAddFeed(
