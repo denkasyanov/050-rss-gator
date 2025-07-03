@@ -8,6 +8,7 @@ import { handlerReset } from "./commands/reset.js";
 import {
   handlerAddFeed,
   handlerAgg,
+  handlerBrowse,
   handlerFollowFeed,
   handlerFollowing,
   handlerListFeeds,
@@ -35,6 +36,7 @@ async function main() {
     "unfollow",
     middlewareLoggedIn(handlerUnfollowFeed)
   );
+  registerCommand(registry, "browse", middlewareLoggedIn(handlerBrowse));
 
   registerCommand(registry, "reset", handlerReset);
 

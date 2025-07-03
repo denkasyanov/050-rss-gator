@@ -8,8 +8,10 @@ import {
 } from "../lib/db/queries/rss.js";
 import { getUser } from "../lib/db/queries/users.js";
 import { User } from "../lib/db/schema.js";
-import { printFeed, scrapeFeeds } from "../lib/rss.js";
-import { formatDuration, parseDuration } from "../lib/time.js";
+import { scrapeFeeds } from "../lib/rss.js";
+import { formatDuration, parseDuration } from "../lib/datetime.js";
+import { getPostsForUser } from "../lib/db/queries/posts.js";
+import { printFeed, printPostList } from "../lib/views.js";
 
 export async function handlerAgg(_cmdName: string, ...args: string[]) {
   const timeBetweenReqsStr = args[0];
@@ -143,4 +145,20 @@ export async function handlerUnfollowFeed(
   }
 
   printFeed(feedFollow.feed, feedFollow.user);
+}
+
+export async function handlerBrowse(
+  _cmdName: string,
+  user: User,
+  ...args: string[]
+) {
+  const limitStr = args[0];
+  const limit = limitStr ? parseInt(limitStr, 10) : 2;
+  
+  if (isNaN(limit) || limit < 1) {
+    throw new Error("Limit must be a positive number");
+  }
+
+  const posts = await getPostsForUser(user.id, limit);
+  printPostList(posts, user.name);
 }

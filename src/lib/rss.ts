@@ -1,6 +1,8 @@
 import { XMLParser } from "fast-xml-parser";
-import { Feed, User } from "./db/schema.js";
 import { getNextFeedToFetch, markFeedAsFetched } from "./db/queries/rss.js";
+import { createPost } from "./db/queries/posts.js";
+import { parseRSSDate } from "./datetime.js";
+import { printAggregatorStart, printAggregatorSummary } from "./views.js";
 
 type ParsedRSSFeed = {
   channel: {
@@ -50,15 +52,6 @@ export async function fetchFeed(feedUrl: string): Promise<ParsedRSSFeed["channel
   return feed.rss.channel;
 }
 
-export function printFeed(feed: Feed, user: User) {
-  console.log(`* ID:            ${feed.id}`);
-  console.log(`* Created:       ${feed.createdAt}`);
-  console.log(`* Updated:       ${feed.updatedAt}`);
-  console.log(`* name:          ${feed.name}`);
-  console.log(`* URL:           ${feed.url}`);
-  console.log(`* User:          ${user.name}`);
-  console.log("--------------------------------");
-}
 
 
 export async function scrapeFeeds() {
@@ -71,22 +64,37 @@ export async function scrapeFeeds() {
   await markFeedAsFetched(nextFeed.id);
 
   try {
-    console.log("=====================================");
-    console.log(`Fetching feed: ${nextFeed.name}`);
-    console.log(`URL: ${nextFeed.url}`);
-    console.log("=====================================");
+    printAggregatorStart(nextFeed.name, nextFeed.url);
     
     const feedData = await fetchFeed(nextFeed.url);
     
-    if (feedData.item && Array.isArray(feedData.item)) {
-      for (const item of feedData.item) {
-        console.log(`- ${item.title}`);
+    let savedCount = 0;
+    let skippedCount = 0;
+    
+    const items = feedData.item 
+      ? (Array.isArray(feedData.item) ? feedData.item : [feedData.item as ParsedRSSItem])
+      : [];
+    
+    for (const item of items) {
+      const publishedAt = parseRSSDate(item.pubDate);
+      const post = await createPost({
+        title: item.title,
+        url: item.link,
+        feedId: nextFeed.id,
+        description: item.description,
+        publishedAt
+      });
+      
+      if (post) {
+        savedCount++;
+        console.log(`✓ Saved: ${item.title}`);
+      } else {
+        skippedCount++;
+        console.log(`- Skipped (already exists): ${item.title}`);
       }
-    } else if (feedData.item) {
-      const singleItem = feedData.item as ParsedRSSItem;
-      console.log(`- ${singleItem.title}`);
     }
-    console.log("=====================================\n");
+    
+    printAggregatorSummary(savedCount, skippedCount);
   } catch (error) {
     console.error(`Error fetching feed ${nextFeed.name}: ${(error as Error).message}`);
   }
